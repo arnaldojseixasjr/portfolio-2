@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parte 2 — Arsenal de Ferramentas, IAs & Oficina "Operação Profile Up"</title>
+  <meta name="description" content="Parte 2 da aula: hospedagem gratuita, engenharia de prompts com IA para personal branding e oficina prática Operação Profile Up." />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'gh-bg':       '#0d1117',
+            'gh-bg-soft':  '#161b22',
+            'gh-bg-soft2': '#1c2128',
+            'gh-border':   '#30363d',
+            'gh-border-soft':'#21262d',
+            'gh-green':    '#2ea043',
+            'gh-green-soft':'#3fb950',
+            'gh-blue':     '#58a6ff',
+            'gh-purple':   '#8a63d2',
+            'gh-purple-soft':'#bc8cff',
+            'gh-yellow':   '#d29922',
+            'gh-red':      '#f85149',
+            'gh-text':     '#c9d1d9',
+            'gh-muted':    '#8b949e',
+            'gh-faint':    '#6e7681',
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+          boxShadow: {
+            'glow-green': '0 0 0 1px rgba(46,160,67,0.4), 0 0 24px -4px rgba(46,160,67,0.35)',
+            'glow-blue':  '0 0 0 1px rgba(88,166,255,0.4), 0 0 24px -4px rgba(88,166,255,0.35)',
+            'glow-purple':'0 0 0 1px rgba(138,99,210,0.4), 0 0 24px -4px rgba(138,99,210,0.35)',
+            'card':       '0 1px 0 rgba(255,255,255,0.04) inset, 0 8px 24px -12px rgba(0,0,0,0.6)',
+          },
+        }
+      }
+    }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: #0d1117;
+      color: #c9d1d9;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: #0d1117; }
+    ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 6px; }
+    ::-webkit-scrollbar-thumb:hover { background: #484f58; }
+    ::selection { background: rgba(138,99,210,0.35); color:#fff; }
+
+    .text-gradient {
+      background: linear-gradient(120deg, #8a63d2 0%, #58a6ff 50%, #3fb950 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(48,54,61,0.35) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(48,54,61,0.35) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+    .hero-glow::before{
+      content:""; position:absolute; inset:-20%;
+      background:
+        radial-gradient(40% 30% at 15% 20%, rgba(138,99,210,0.20), transparent 60%),
+        radial-gradient(40% 30% at 85% 30%, rgba(46,160,67,0.18), transparent 60%),
+        radial-gradient(50% 40% at 50% 100%, rgba(88,166,255,0.14), transparent 70%);
+      filter: blur(40px); z-index:0; pointer-events:none;
+    }
+
+    /* Tabs */
+    .tab-btn { transition: all .25s ease; }
+    .tab-btn.active {
+      color: #ffffff;
+      background-color: rgba(138,99,210,0.12);
+      border-color: rgba(138,99,210,0.45);
+      box-shadow: 0 0 0 1px rgba(138,99,210,0.25), 0 8px 24px -12px rgba(138,99,210,0.45);
+    }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; animation: fadeUp .55s cubic-bezier(.16,1,.3,1); }
+    @keyframes fadeUp { from {opacity:0; transform: translateY(12px);} to {opacity:1; transform:none;} }
+
+    /* Accordion */
+    .acc-content { max-height: 0; overflow: hidden; transition: max-height .55s cubic-bezier(.16,1,.3,1), opacity .4s ease; opacity:0; }
+    .acc-content.open { max-height: 1400px; opacity:1; }
+    .acc-chevron { transition: transform .35s ease; }
+    .acc-trigger.open .acc-chevron { transform: rotate(180deg); }
+
+    /* Reveal */
+    .reveal { opacity:0; transform: translateY(24px); transition: all .8s cubic-bezier(.16,1,.3,1); }
+    .reveal.in { opacity:1; transform:none; }
+
+    /* Code block */
+    .code-block { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.75; }
+    .copy-btn.copied { color:#3fb950 !important; border-color:#2ea043 !important; }
+
+    /* Nav link */
+    .nav-link { position:relative; }
+    .nav-link::after {
+      content:""; position:absolute; left:0; bottom:-4px; height:2px; width:0;
+      background: linear-gradient(90deg, #8a63d2, #58a6ff); transition: width .3s ease;
+    }
+    .nav-link:hover::after, .nav-link.active::after { width:100%; }
+
+    /* Deploy card hover */
+    .deploy-card { transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+    .deploy-card:hover { transform: translateY(-4px); }
+
+    /* Step card */
+    .step-card { transition: all .25s ease; }
+    .step-card.done { border-color: rgba(46,160,67,0.6); background-color: rgba(46,160,67,0.04); }
+    .step-card.done .step-number { background-color:#2ea043; color:#fff; border-color:#2ea043; }
+
+    /* Prompt card */
+    .prompt-card { transition: border-color .25s ease; }
+    .prompt-card:hover { border-color: rgba(138,99,210,0.5); }
+
+    .sec-num { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.02em; }
+  </style>
+</head>
+
+<body class="min-h-screen antialiased">
+
+  <!-- ============================== NAV ============================== -->
+  <header class="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-gh-bg/80 border-b border-gh-border/70">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="#top" class="flex items-center gap-2 group">
+        <div class="w-8 h-8 rounded-md bg-gradient-to-br from-gh-purple via-gh-blue to-gh-green flex items-center justify-center text-white font-black text-sm shadow-glow-purple">
+          <i class="fa-solid fa-toolbox"></i>
+        </div>
+        <div class="leading-tight">
+          <p class="text-sm font-bold text-white">Operação Profile Up</p>
+          <p class="text-[10px] text-gh-muted font-mono">parte_02 / mao_na_massa</p>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-6 text-sm text-gh-muted">
+        <a href="index.html" class="hover:text-white transition flex items-center gap-1.5">
+          <i class="fa-solid fa-arrow-left text-[10px]"></i> Parte 1
+        </a>
+        <a href="#deploy" class="nav-link hover:text-white transition">Deploy</a>
+        <a href="#ia" class="nav-link hover:text-white transition">IA & Prompts</a>
+        <a href="#oficina" class="nav-link hover:text-white transition">Oficina</a>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gh-purple/10 border border-gh-purple/40 text-gh-purple-soft text-xs font-semibold">
+          <i class="fa-solid fa-screwdriver-wrench"></i> Lab
+        </span>
+        <a href="#oficina" class="text-xs font-semibold px-3 py-1.5 rounded-md bg-gh-purple/15 border border-gh-purple/40 text-gh-purple-soft hover:bg-gh-purple/25 transition">
+          Começar Lab <i class="fa-solid fa-arrow-right ml-1 text-[10px]"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================== HERO ============================== -->
+  <section id="top" class="relative pt-28 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden hero-glow">
+    <div class="absolute inset-0 grid-bg opacity-30 z-0"></div>
+    <div class="max-w-7xl mx-auto relative z-10">
+
+      <div class="flex flex-col items-start gap-5 max-w-4xl">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gh-purple/10 border border-gh-purple/40 text-gh-purple-soft text-xs font-bold uppercase tracking-wider">
+            <i class="fa-solid fa-screwdriver-wrench"></i> Parte 2: Ferramentas &amp; Mão na Massa
+          </span>
+          <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gh-green/10 border border-gh-green/40 text-gh-green-soft text-xs font-bold uppercase tracking-wider">
+            <i class="fa-solid fa-rocket"></i> Deploy Grátis
+          </span>
+          <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gh-blue/10 border border-gh-blue/40 text-gh-blue text-xs font-bold uppercase tracking-wider">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Engenharia de Prompts
+          </span>
+        </div>
+
+        <p class="sec-num text-gh-faint text-sm">// 00 — parte_02 / arsenal</p>
+
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.05] tracking-tight text-white">
+          Arsenal de Ferramentas, IAs &amp;<br class="hidden sm:block" />
+          Oficina Prática <span class="text-gradient">"Operação Profile Up"</span>
+        </h1>
+
+        <p class="text-lg sm:text-xl text-gh-muted max-w-2xl leading-relaxed">
+          Hospedagem <span class="text-white font-semibold">gratuita</span>, engenharia de <span class="text-white font-semibold">prompts</span> para personal branding e guia passo a passo da <span class="text-white font-semibold">atividade prática em sala</span>. Saímos da teoria e colocamos o mouse na mão.
+        </p>
+
+        <div class="flex flex-wrap items-center gap-3 pt-2">
+          <a href="#deploy" class="group inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gh-purple text-white font-bold text-sm hover:bg-gh-purple-soft transition shadow-glow-purple">
+            <i class="fa-solid fa-rocket"></i> Ver Arsenal de Deploy
+          </a>
+          <a href="#ia" class="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gh-bg-soft border border-gh-border text-gh-text font-semibold text-sm hover:border-gh-purple/50 hover:text-white transition">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Pegar os Prompts
+          </a>
+          <a href="#oficina" class="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gh-bg-soft border border-gh-border text-gh-text font-semibold text-sm hover:border-gh-green/50 hover:text-white transition">
+            <i class="fa-solid fa-list-check"></i> Começar a Oficina
+          </a>
+        </div>
+
+        <!-- Quick stats -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full pt-8">
+          <div class="rounded-lg bg-gh-bg-soft/60 border border-gh-border/70 p-4">
+            <p class="text-2xl font-black text-gh-purple-soft">6</p>
+            <p class="text-xs text-gh-muted mt-1">plataformas de deploy cobertas, do site estático à API back-end</p>
+          </div>
+          <div class="rounded-lg bg-gh-bg-soft/60 border border-gh-border/70 p-4">
+            <p class="text-2xl font-black text-gh-blue">4</p>
+            <p class="text-xs text-gh-muted mt-1">prompts prontos para copiar e colar no ChatGPT/Claude</p>
+          </div>
+          <div class="rounded-lg bg-gh-bg-soft/60 border border-gh-border/70 p-4">
+            <p class="text-2xl font-black text-gh-green-soft">7</p>
+            <p class="text-xs text-gh-muted mt-1">etapas da oficina para subir seu perfil de "zero a visível" em sala</p>
+          </div>
+          <div class="rounded-lg bg-gh-bg-soft/60 border border-gh-border/70 p-4">
+            <p class="text-2xl font-black text-gh-yellow">~90 min</p>
+            <p class="text-xs text-gh-muted mt-1">duração estimada do laboratório prático guiado</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== BLOCO 3A: DEPLOY GRATUITO ============================== -->
+  <section id="deploy" class="relative py-20 px-4 sm:px-6 lg:px-8 border-t border-gh-border/40">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="reveal max-w-3xl mb-10">
+        <p class="sec-num text-gh-faint text-sm">// 01 — arsenal_deploy</p>
+        <div class="flex items-center gap-2 mt-2 mb-4">
+          <i class="fa-solid fa-rocket text-gh-purple text-2xl"></i>
+          <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Onde Subir Projetos de Graça</h2>
+        </div>
+        <p class="text-gh-muted text-lg leading-relaxed">
+          "Sem link de deploy = projeto morto aos olhos do recrutador." Esta frase da Parte 1 não é retórica — é a regra que separa perfis aprovados dos reprovados. As 6 plataformas abaixo cobrem <span class="text-white font-semibold">todos os cenários</span>, do site estático à API back-end, e todas têm plano gratuito generoso. Escolha pela stack, não pela marca.
+        </p>
+      </div>
+
+      <!-- Tabs to organize platforms -->
+      <div class="reveal flex flex-col sm:flex-row gap-3 mb-8">
+        <button data-tab="tab-static" class="tab-btn active flex-1 flex items-center gap-3 px-5 py-4 rounded-xl bg-gh-bg-soft border border-gh-border text-gh-muted text-left">
+          <span class="w-10 h-10 rounded-lg bg-gh-yellow/15 border border-gh-yellow/40 flex items-center justify-center text-gh-yellow text-lg">
+            <i class="fa-solid fa-file-code"></i>
+          </span>
+          <span class="flex-1">
+            <span class="block text-xs text-gh-faint font-mono">FRONT-END ESTÁTICO</span>
+            <span class="block text-base font-bold text-white">HTML/CSS/JS, builds de React</span>
+          </span>
+        </button>
+        <button data-tab="tab-frontfull" class="tab-btn flex-1 flex items-center gap-3 px-5 py-4 rounded-xl bg-gh-bg-soft border border-gh-border text-gh-muted text-left">
+          <span class="w-10 h-10 rounded-lg bg-gh-green/15 border border-gh-green/40 flex items-center justify-center text-gh-green-soft text-lg">
+            <i class="fa-solid fa-bolt"></i>
+          </span>
+          <span class="flex-1">
+            <span class="block text-xs text-gh-faint font-mono">FRONT-END FULL-STACK</span>
+            <span class="block text-base font-bold text-white">React, Next.js, Vue, Tailwind</span>
+          </span>
+        </button>
+        <button data-tab="tab-backend" class="tab-btn flex-1 flex items-center gap-3 px-5 py-4 rounded-xl bg-gh-bg-soft border border-gh-border text-gh-muted text-left">
+          <span class="w-10 h-10 rounded-lg bg-gh-blue/15 border border-gh-blue/40 flex items-center justify-center text-gh-blue text-lg">
+            <i class="fa-solid fa-server"></i>
+          </span>
+          <span class="flex-1">
+            <span class="block text-xs text-gh-faint font-mono">BACK-END &amp; APIs</span>
+            <span class="block text-base font-bold text-white">Node.js, Python, Java</span>
+          </span>
+        </button>
+      </div>
+
+      <!-- ============ PANEL: ESTÁTICO ============ -->
+      <div id="tab-static" class="tab-panel active">
+        <div class="grid lg:grid-cols-2 gap-6">
+          <!-- GitHub Pages -->
+          <article class="deploy-card reveal rounded-xl bg-gh-bg-soft border border-gh-border p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-lg bg-gh-bg border border-gh-border flex items-center justify-center text-2xl text-white">
+                  <i class="fa-brands fa-github"></i>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-white">GitHub Pages</h3>
+                  <p class="text-xs text-gh-muted">Hospedagem estática nativa do GitHub</p>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-gh-green-soft border border-gh-green/40 bg-gh-green/10 px-2 py-1 rounded">100% Grátis</span>
+            </div>
+
+            <p class="text-sm text-gh-muted leading-relaxed mb-4">
+              A opção mais simples para sites estáticos: <span class="text-white font-semibold">HTML/CSS/JS puro</span>, documentação, portfolios, ou builds de projetos React/Vite (depois do <code class="font-mono text-gh-blue">npm run build</code>). Já está dentro do GitHub — sem nova conta, sem nova fatura. O limite é 100GB de banda/mês, mais que suficiente para um portfólio.
+            </p>
+
+            <!-- Atalho de uso -->
+            <div class="rounded-md bg-gh-bg border border-gh-border p-3 mb-4">
+              <p class="text-xs uppercase tracking-wider text-gh-faint font-bold mb-2"><i class="fa-solid fa-keyboard text-gh-yellow"></i> Atalho em 3 cliques</p>
+              <ol class="space-y-1.5 text-sm text-gh-text">
+                <li><span class="font-mono text-gh-yellow font-bold">1.</span> Abra o repositório → vá em <span class="font-mono text-gh-blue">Settings</span></li>
+                <li><span class="font-mono text-gh-yellow font-bold">2.</span> No menu lateral → clique em <span class="font-mono text-gh-blue">Pages</span></li>
+                <li><span class="font-mono text-gh-yellow font-bold">3.</span> Em <span class="font-mono text-gh-blue">Source</span> escolha <span class="font-mono text-gh-green-soft">Branch: main</span> → Save</li>
+              </ol>
+              <p class="text-[11px] text-gh-faint mt-2 italic"><i class="fa-solid fa-circle-info text-gh-blue"></i> Em ~1 minuto seu site estará em <code class="font-mono text-gh-blue">https://usuario.github.io/repositorio/</code></p>
+            </div>
+
+            <!-- Quando usar -->
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="rounded-md bg-gh-green/5 border border-gh-green/30 p-2.5">
+                <p class="text-gh-green-soft font-bold mb-1"><i class="fa-solid fa-check"></i> Use para</p>
+                <p class="text-gh-muted">Portfólio, currículo online, docs, projetos vanilla JS, builds estáticos</p>
+              </div>
+              <div class="rounded-md bg-gh-red/5 border border-gh-red/30 p-2.5">
+                <p class="text-gh-red font-bold mb-1"><i class="fa-solid fa-xmark"></i> Evite para</p>
+                <p class="text-gh-muted">APIs, banco de dados, server-side rendering, lógica de back-end</p>
+              </div>
+            </div>
+
+            <a href="https://pages.github.com" target="_blank" class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-gh-blue hover:text-gh-blue/80 transition">
+              Abrir pages.github.com <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+            </a>
+          </article>
+
+          <!-- Dicas de build estático -->
+          <article class="reveal rounded-xl bg-gh-bg-soft border border-gh-border p-6">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-12 h-12 rounded-lg bg-gh-bg border border-gh-border flex items-center justify-center text-2xl text-gh-yellow">
+                <i class="fa-solid fa-lightbulb"></i>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-white">Builds de React no GitHub Pages</h3>
+                <p class="text-xs text-gh-muted">O caminho quando você não quer Vercel</p>
+              </div>
+            </div>
+
+            <p class="text-sm text-gh-muted leading-relaxed mb-4">
+              Dá para rodar <span class="text-white font-semibold">React, Vue ou Svelte</span> no GitHub Pages, mas precisa de 2 cuidados extras que iniciantes esquecem — e que custam horas de "por que minha tela está em branco?":
+            </p>
+
+            <div class="space-y-3">
+              <div class="rounded-md bg-gh-bg border border-gh-border p-3">
+                <p class="font-mono text-sm text-gh-blue font-semibold mb-1">1. Configurar o <code>base</code> no Vite</p>
+                <p class="text-[12px] text-gh-muted leading-relaxed">
+                  O GitHub Pages serve em <code class="font-mono text-gh-yellow">/repositorio/</code>, não na raiz. Em <code class="font-mono text-gh-text">vite.config.js</code>:
+                </p>
+                <pre class="code-block text-gh-text mt-2 p-2 rounded bg-gh-bg-soft2 border border-gh-border-soft overflow-x-auto">export default defineConfig({
+  base: '/meu-repo/',
+  plugins: [react()]
+})</pre>
+              </div>
+
+              <div class="rounded-md bg-gh-bg border border-gh-border p-3">
+                <p class="font-mono text-sm text-gh-blue font-semibold mb-1">2. Adicionar gh-pages e script de deploy</p>
+                <pre class="code-block text-gh-text mt-2 p-2 rounded bg-gh-bg-soft2 border border-gh-border-soft overflow-x-auto">npm i -D gh-pages
+// package.json
+"scripts": {
+  "deploy": "npm run build &amp;&amp;
+    gh-pages -d dist"
+}</pre>
+                <p class="text-[11px] text-gh-faint mt-2 italic"><i class="fa-solid fa-circle-info text-gh-blue"></i> Para projetos estáticos sem framework, pule direto para Settings → Pages. Vai direto.</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- ============ PANEL: FRONT-END FULL-STACK ============ -->
+      <div id="tab-frontfull" class="tab-panel">
+        <div class="grid lg:grid-cols-2 gap-6">
+          <!-- Vercel -->
+          <article class="deploy-card reveal rounded-xl bg-gh-bg-soft border border-gh-border p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-lg bg-black border border-gh-border flex items-center justify-center text-2xl">
+                  <svg viewBox="0 0 76 65" fill="white" class="w-6 h-5"><path d="M37.59.25l36.95 64H.64l36.95-64z"/></svg>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-white">Vercel</h3>
+                  <p class="text-xs text-gh-muted">A casa do Next.js — mas roda qualquer front</p>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-gh-green-soft border border-gh-green/40 bg-gh-green/10 px-2 py-1 rounded">Hobby Grátis</span>
+            </div>
+
+            <p class="text-sm text-gh-muted leading-relaxed mb-4">
+              Criada pela equipe do Next.js, é a <span class="text-white font-semibold">referência para projetos React/Vue/Svelte</span> com SSR, API routes ou funções serverless. Detecta o framework automaticamente, faz preview-deploy a cada PR e tem CDN global gratuita. O plano Hobby cobre portfólios e MVPs sem cobrar — basta não usar para fins comerciais de alto tráfego.
+            </p>
+
+            <!-- Conexão em 2 cliques -->
+            <div class="rounded-md bg-gh-bg border border-gh-border p-3 mb-4">
+              <p class="text-xs uppercase tracking-wider text-gh-faint font-bold mb-2"><i class="fa-solid fa-bolt text-gh-yellow"></i> Conexão em 2 cliques</p>
+              <ol class="space-y-1.5 text-sm text-gh-text">
+                <li><span class="font-mono text-gh-yellow font-bold">1.</span> Clique em <span class="font-mono text-gh-blue">"Add New → Project"</span> e autorize o GitHub</li>
+                <li><span class="font-mono text-gh-yellow font-bold">2.</span> Selecione o repositório → clique em <span class="font-mono text-gh-green-soft">Deploy</span></li>
+              </ol>
+              <p class="text-[11px] text-gh-faint mt-2 italic"><i class="fa-solid fa-circle-info text-gh-blue"></i> A partir daqui, todo <code class="font-mono">git push</code> re-deploya automaticamente.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="rounded-md bg-gh-green/5 border border-gh-green/30 p-2.5">
+                <p class="text-gh-green-soft font-bold mb-1"><i class="fa-solid fa-check"></i> Use para</p>
+                <p class="text-gh-muted">Next.js, React, Vue, Svelte, Astro, sites Tailwind, MVPs com API routes</p>
+              </div>
+              <div class="rounded-md bg-gh-red/5 border border-gh-red/30 p-2.5">
+                <p class="text-gh-red font-bold mb-1"><i class="fa-solid fa-xmark"></i> Evite para</p>
+                <p class="text-gh-muted">Back-ends pesados, long-running tasks, WebSockets persistentes, Docker custom</p>
+              </div>
+            </div>
+
+            <a href="https://vercel.com" target="_blank" class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-gh-blue hover:text-gh-blue/80 transition">
+              Abrir vercel.com <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+            </a>
+          </article>
+
+          <!-- Netlify -->
+          <article class="deploy-card reveal rounded-xl bg-gh-bg-soft border border-gh-border p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-lg bg-[#20c4b8] border border-gh-border flex items-center justify-center text-2xl text-white">
+                  <i class="fa-solid fa-diamond"></i>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-white">Netlify</h3>
+                  <p class="text-xs text-gh-muted">A alternativa mais "drag-and-drop" do mercado</p>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-gh-green-soft border border-gh-green/40 bg-gh-green/10 px-2 py-1 rounded">Starter Grátis</span>
+            </div>
+
+            <p class="text-sm text-gh-muted leading-relaxed mb-4">
+              Faz exatamente o que a Vercel faz para front-end e estáticos — com a vantagem de aceitar <span class="text-white font-semibold">arrastar-soltar uma pasta</span> direto no painel (sem nem precisar de repositório) e ter <span class="text-white font-semibold">funções serverless</span> em JavaScript puro. Perfeita para quem está começando e quer ver algo no ar em 30 segundos.
+            </p>
+
+            <div class="rounded-md bg-gh-bg border border-gh-border p-3 mb-4">
+              <p class="text-xs uppercase tracking-wider text-gh-faint font-bold mb-2"><i class="fa-solid fa-bolt text-gh-yellow"></i> Conexão em 2 cliques</p>
+              <ol class="space-y-1.5 text-sm text-gh-text">
+                <li><span class="font-mono text-gh-yellow font-bold">1.</span> Clique em <span class="font-mono text-gh-blue">"Add new site → Import an existing project"</span></li>
+                <li><span class="font-mono text-gh-yellow font-bold">2.</span> Escolha o repositório no GitHub → <span class="font-mono text-gh-green-soft">Deploy site</span></li>
+              </ol>
+              <p class="text-[11px] text-gh-faint mt-2 italic"><i class="fa-solid fa-hand-pointer text-gh-blue"></i> Sem repo? Arraste a pasta <code class="font-mono">dist/</code> direto em <span class="text-white">app.netlify.com/drop</span></p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="rounded-md bg-gh-green/5 border border-gh-green/30 p-2.5">
+                <p class="text-gh-green-soft font-bold mb-1"><i class="fa-solid fa-check"></i> Use para</p>
+                <p class="text-gh-muted">Sites estáticos, SPAs, formulários integrados, deploy de pasta, MVPs sem back</p>
+              </div>
+              <div class="rounded-md bg-gh-red/5 border border-gh-red/30 p-2.5">
+                <p class="text-gh-red font-bold mb-1"><i class="fa-solid fa-xmark"></i> Evite para</p>
+                <p class="text-gh-muted">Apps que precisam de SSR pesado, banco relacional, runtime de longa duração</p>
+              </div>
+            </div>
+
+            <a href="https://netlify.com" target="_blank" class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-gh-blue hover:text-gh-blue/80 transition">
+              Abrir netlify.com <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+            </a>
+          </article>
+        </div>
+      </div>
+
+      <!-- ============ PANEL: BACK-END ============ -->
+      <div id="tab-backend" class="tab-panel">
+        <div class="grid lg:grid-cols-3 gap-6">
+          <!-- Render -->
+          <article class="deploy-card reveal rounded-xl bg-gh-bg-soft border border-gh-border p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-lg bg-gh-purple/15 border border-gh-purple/40 flex items-center justify-center text-2xl text-gh-purple-soft">
+                  <i class="fa-solid fa-cubes"></i>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-white">Render</h3>
+                  <p class="text-xs text-gh-muted">O "Heroku da nova geração"</p>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-gh-green-soft border border-gh-green/40 bg-gh-green/10 px-2 py-1 rounded">Free</span>
+            </div>
+
+            <p class="text-sm text-gh-muted leading-relaxed mb-4">
+              Suporta <span class="text-white font-semibold">Node.js, Python, Ruby, Go, Rust, Docker</span> — o mais flexível dos três. Tem instâncias web, workers em background, banco PostgreSQL e Redis no plano grátis. O único porém: o free tier "adormece" após 15 min de inatividade e demora ~50s para "acordar" na próxima request.
+            </p>
+
+            <div class="rounded-md bg-gh-bg border border-gh-border p-3 mb-4">
+              <p class="text-[11px] text-gh-yellow font-bold mb-1"><i class="fa-solid fa-triangle-exclamation"></i> Ponto de atenção</p>
+              <p class="text-xs text-gh-muted">Cold-start de ~50s no free. Para MVP de portfólio é tranquilo — para produção comercial, considera plano pago.</p>
+            </div>
+
+            <a href="https://render.com" target="_blank" class="inline-flex items-center gap-2 text-sm font-semibold text-gh-blue hover:text-gh-blue/80 transition">
+              Abrir render.com <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+            </a>
+          </article>
+
+          <!-- Railway -->
+          <article class="deploy-card reveal rounded-xl bg-gh-bg-soft border border-gh-border p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-lg bg-gh-bg border border-gh-border flex items-center justify-center text-2xl">
+                  <svg viewBox="0 0 24 24" class="w-7 h-7" fill="currentColor" style="color:#fff"><path d="M0 19.052V4.947C0 4.348.485 3.863 1.084 3.863h21.832C23.515 3.863 24 4.348 24 4.947v14.105c0 .599-.485 1.084-1.084 1.084H1.084C.485 20.136 0 19.651 0 19.052zm6.108-2.554c.065 0 .13-.026.176-.07l1.061-1.062a.25.25 0 0 0 0-.353l-1.061-1.062a.25.25 0 0 0-.353 0l-1.062 1.062a.25.25 0 0 0 0 .353l1.062 1.062a.25.25 0 0 0 .176.07z"/></svg>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-white">Railway</h3>
+                  <p class="text-xs text-gh-muted">UX premium, deploy com 1 clique</p>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-gh-yellow border border-gh-yellow/40 bg-gh-yellow/10 px-2 py-1 rounded">Trial + Hobby</span>
+            </div>
+
+            <p class="text-sm text-gh-muted leading-relaxed mb-4">
+              O mais fácil para subir APIs Node/Python/Go: detecção automática de framework, banco PostgreSQL/Redis "de branca" e painel lindíssimo. Não tem free ilimitado de verdade — mas oferece <span class="text-white font-semibold">crédito mensal de US$5</span> que cobre MVPs de baixo tráfego. Para a aula é mais que suficiente.
+            </p>
+
+            <div class="rounded-md bg-gh-bg border border-gh-border p-3 mb-4">
+              <p class="text-[11px] text-gh-green-soft font-bold mb-1"><i class="fa-solid fa-circle-check"></i> Destaque</p>
+              <p class="text-xs text-gh-muted">Adiciona PostgreSQL com 1 clique. Detecção de <code class="font-mono text-gh-blue">package.json</code> automática. Logs em tempo real.</p>
+            </div>
+
+            <a href="https://railway.app" target="_blank" class="inline-flex items-center gap-2 text-sm font-semibold text-gh-blue hover:text-gh-blue/80 transition">
+              Abrir railway.app <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+            </a>
+          </article>
+
+          <!-- Koyeb -->
+          <article class="deploy-card reveal rounded-xl bg-gh-bg-soft border border-gh-border p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-lg bg-gh-blue/15 border border-gh-blue/40 flex items-center justify-center text-2xl text-gh-blue">
+                  <i class="fa-solid fa-network-wired"></i>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-white">Koyeb</h3>
+                  <p class="text-xs text-gh-muted">Free generoso, Docker-native</p>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-gh-green-soft border border-gh-green/40 bg-gh-green/10 px-2 py-1 rounded">Free</span>
+            </div>
+
+            <p class="text-sm text-gh-muted leading-relaxed mb-4">
+              Aposta para quem precisa de <span class="text-white font-semibold">Docker custom</span> no free tier. Aceita deploy de Dockerfile direto do GitHub, com auto-deploy por PR e endpoints globais. O free tier oferece 1 serviço web + 1 worker sem cold-start tão agressivo quanto o Render.
+            </p>
+
+            <div class="rounded-md bg-gh-bg border border-gh-border p-3 mb-4">
+              <p class="text-[11px] text-gh-green-soft font-bold mb-1"><i class="fa-solid fa-circle-check"></i> Destaque</p>
+              <p class="text-xs text-gh-muted">Suporta Docker sem precisar de plano pago. SSL automático. Sem cold-start na mesma medida do Render.</p>
+            </div>
+
+            <a href="https://koyeb.com" target="_blank" class="inline-flex items-center gap-2 text-sm font-semibold text-gh-blue hover:text-gh-blue/80 transition">
+              Abrir koyeb.com <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+            </a>
+          </article>
+        </div>
+
+        <!-- Comparativo -->
+        <div class="reveal mt-8 rounded-xl bg-gh-bg-soft border border-gh-border p-6 overflow-x-auto">
+          <p class="text-sm text-white font-bold mb-3"><i class="fa-solid fa-table text-gh-purple-soft"></i> Comparativo rápido — qual escolher?</p>
+          <table class="w-full text-sm min-w-[640px]">
+            <thead>
+              <tr class="text-gh-faint text-xs uppercase tracking-wider border-b border-gh-border">
+                <th class="text-left py-2 px-2">Cenário</th>
+                <th class="text-left py-2 px-2">Plataforma</th>
+                <th class="text-left py-2 px-2">Por quê</th>
+              </tr>
+            </thead>
+            <tbody class="text-gh-muted">
+              <tr class="border-b border-gh-border-soft">
+                <td class="py-2.5 px-2">Currículo HTML puro, portfólio vanilla JS</td>
+                <td class="py-2.5 px-2 text-gh-text font-semibold">GitHub Pages</td>
+                <td class="py-2.5 px-2">Já está no GitHub, sem conta nova.</td>
+              </tr>
+              <tr class="border-b border-gh-border-soft">
+                <td class="py-2.5 px-2">React/Next.js com API routes</td>
+                <td class="py-2.5 px-2 text-gh-text font-semibold">Vercel</td>
+                <td class="py-2.5 px-2">Integração nativa, CDN global, preview por PR.</td>
+              </tr>
+              <tr class="border-b border-gh-border-soft">
+                <td class="py-2.5 px-2">Site estático sem repo (deploy de pasta)</td>
+                <td class="py-2.5 px-2 text-gh-text font-semibold">Netlify Drop</td>
+                <td class="py-2.5 px-2">Arrasta-solta a pasta <code class="font-mono text-gh-yellow">dist/</code> e pronto.</td>
+              </tr>
+              <tr class="border-b border-gh-border-soft">
+                <td class="py-2.5 px-2">API Node/Express com banco</td>
+                <td class="py-2.5 px-2 text-gh-text font-semibold">Render</td>
+                <td class="py-2.5 px-2">Free ilimitado + PostgreSQL grátis. Tem cold-start.</td>
+              </tr>
+              <tr class="border-b border-gh-border-soft">
+                <td class="py-2.5 px-2">API com banco em 5 minutos</td>
+                <td class="py-2.5 px-2 text-gh-text font-semibold">Railway</td>
+                <td class="py-2.5 px-2">UX premium, mas atente ao crédito mensal.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-2">API em Docker custom</td>
+                <td class="py-2.5 px-2 text-gh-text font-semibold">Koyeb</td>
+                <td class="py-2.5 px-2">Free com suporte a Dockerfile direto.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================== BLOCO 3B: IA & PROMPTS ============================== -->
+  <section id="ia" class="relative py-20 px-4 sm:px-6 lg:px-8 border-t border-gh-border/40">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="reveal max-w-3xl mb-10">
+        <p class="sec-num text-gh-faint text-sm">// 02 — engenharia_de_prompts</p>
+        <div class="flex items-center gap-2 mt-2 mb-4">
+          <i class="fa-solid fa-wand-magic-sparkles text-gh-purple text-2xl"></i>
+          <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">IA como Co-piloto de Personal Branding</h2>
+        </div>
+        <p class="text-gh-muted text-lg leading-relaxed">
+          ChatGPT, Claude e Gemini não vão <span class="text-white font-semibold">escrever sua marca por você</span> — mas vão <span class="text-white font-semibold">acelerar 10×</span> a primeira versão de qualquer texto profissional. Os 4 prompts abaixo foram calibrados como <span class="text-white font-semibold">"atores especializados"</span>: cada um assume um papel (recrutador, especialista em DevRel, copywriter de LinkedIn) e segue uma estrutura com entregável claro. Copie, preencha os <code class="font-mono text-gh-yellow">[colchetes]</code> e rode.
+        </p>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="reveal mb-8 rounded-xl bg-gh-yellow/5 border border-gh-yellow/40 p-5 flex items-start gap-4">
+        <div class="shrink-0 w-10 h-10 rounded-lg bg-gh-yellow/15 border border-gh-yellow/40 flex items-center justify-center text-gh-yellow text-xl">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div>
+          <p class="text-white font-bold text-sm mb-1">Princípio da oficina: a IA é co-piloto, não piloto.</p>
+          <p class="text-gh-muted text-sm leading-relaxed">
+            Use a IA para a <span class="text-white font-semibold">primeira versão</span>. Depois, <span class="text-white font-semibold">reescreva 30% com a sua voz</span>. Recrutadores e líderes técnicos reconhecem texto "cru de LLM" a quilômetros de distância — e isso desvaloriza o perfil. A regra de ouro: se a IA escreveu, você revisa.
+          </p>
+        </div>
+      </div>
+
+      <!-- PROMPTS GRID -->
+      <div class="grid lg:grid-cols-2 gap-6">
+
+        <!-- ============ PROMPT 1: README de Projeto ============ -->
+        <article class="prompt-card reveal rounded-xl bg-gh-bg-soft border border-gh-border overflow-hidden flex flex-col">
+          <div class="px-5 py-4 border-b border-gh-border-soft flex items-center justify-between bg-gh-bg-soft2">
+            <div class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-md bg-gh-purple/15 border border-gh-purple/40 flex items-center justify-center text-gh-purple-soft font-mono font-bold">01</span>
+              <div>
+                <p class="text-[11px] text-gh-faint font-mono uppercase tracking-wider">Para: ChatGPT / Claude</p>
+                <h3 class="text-base font-bold text-white">README.md Impactante para Projetos no GitHub</h3>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-gh-blue border border-gh-blue/40 bg-gh-blue/10 px-2 py-1 rounded">DevRel</span>
+          </div>
+
+          <div class="p-5 flex-1 flex flex-col">
+            <p class="text-sm text-gh-muted leading-relaxed mb-3">
+              Gera um README profissional seguindo as <span class="text-white font-semibold">5 seções que recrutadores procuram</span>, com badges Shields.io prontos. Preencha os dados do projeto nos colchetes.
+            </p>
+
+            <div class="relative rounded-md bg-gh-bg border border-gh-border flex-1">
+              <div class="flex items-center justify-between px-3 py-2 border-b border-gh-border-soft">
+                <span class="text-[11px] text-gh-faint font-mono"><i class="fa-solid fa-terminal mr-1"></i> prompt.txt</span>
+                <button class="copy-btn text-[11px] text-gh-muted hover:text-white border border-gh-border rounded px-2 py-0.5 transition" data-copy="prompt1">
+                  <i class="fa-regular fa-copy mr-1"></i> Copiar Prompt
+                </button>
+              </div>
+              <pre id="prompt1" class="code-block text-gh-text p-3 overflow-x-auto whitespace-pre-wrap max-h-72 overflow-y-auto">Atue como um Tech Recruiter e Especialista em Developer Relations. Escreva um arquivo README.md profissional em Markdown para o meu projeto no GitHub.
+
+Dados do Projeto:
+- Nome do Projeto: [Insira o Nome]
+- O que ele faz: [Descreva o projeto em 2 frases]
+- Tecnologias Usadas: [ex: React, Node.js, Tailwind CSS]
+- Principais Funcionalidades: [Liste 3 ou 4 recursos]
+- Link do Projeto Online: [Cole o link da Vercel/GitHub Pages se houver]
+
+Requisitos do README:
+1. Título impactante com badge de status do projeto.
+2. Seção "Sobre o Projeto" explicando o problema e a solução.
+3. Tabela ou lista visual de tecnologias (com badges do shields.io).
+4. Como executar o projeto localmente (passo a passo com git clone, npm install, etc.).
+5. Seção de contato com links para meu LinkedIn e E-mail.</pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- ============ PROMPT 2: Profile README ============ -->
+        <article class="prompt-card reveal rounded-xl bg-gh-bg-soft border border-gh-border overflow-hidden flex flex-col">
+          <div class="px-5 py-4 border-b border-gh-border-soft flex items-center justify-between bg-gh-bg-soft2">
+            <div class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-md bg-gh-purple/15 border border-gh-purple/40 flex items-center justify-center text-gh-purple-soft font-mono font-bold">02</span>
+              <div>
+                <p class="text-[11px] text-gh-faint font-mono uppercase tracking-wider">Para: ChatGPT / Claude</p>
+                <h3 class="text-base font-bold text-white">Profile README — Apresentação Pessoal no GitHub</h3>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-gh-green-soft border border-gh-green/40 bg-gh-green/10 px-2 py-1 rounded">Branding</span>
+          </div>
+
+          <div class="p-5 flex-1 flex flex-col">
+            <p class="text-sm text-gh-muted leading-relaxed mb-3">
+              Gera o conteúdo do repositório especial <code class="font-mono text-gh-blue">username/username</code> — a página que aparece no topo do perfil do GitHub, com sua bio, stack e links.
+            </p>
+
+            <div class="relative rounded-md bg-gh-bg border border-gh-border flex-1">
+              <div class="flex items-center justify-between px-3 py-2 border-b border-gh-border-soft">
+                <span class="text-[11px] text-gh-faint font-mono"><i class="fa-solid fa-terminal mr-1"></i> prompt.txt</span>
+                <button class="copy-btn text-[11px] text-gh-muted hover:text-white border border-gh-border rounded px-2 py-0.5 transition" data-copy="prompt2">
+                  <i class="fa-regular fa-copy mr-1"></i> Copiar Prompt
+                </button>
+              </div>
+              <pre id="prompt2" class="code-block text-gh-text p-3 overflow-x-auto whitespace-pre-wrap max-h-72 overflow-y-auto">Atue como um Especialista em Personal Branding para Desenvolvedores. Escreva o conteúdo de um arquivo README.md para o meu repositório especial "username/username" (Profile README do GitHub) — aquele que aparece automaticamente no topo do meu perfil público.
+
+Dados sobre mim:
+- Nome: [Seu Nome Completo]
+- Cargo atual / área: [ex: Desenvolvedor Front-end Júnior]
+- Stack dominada: [ex: React, TypeScript, Tailwind, Node.js]
+- Tempo de experiência: [ex: 1 ano / estudante do 3º semestre]
+- Foco / interesse atual: [ex: Acessibilidade web, performance, design systems]
+- Projetos que mais orgulho: [listar 2 ou 3]
+- Onde me encontrar: [LinkedIn, e-mail, portfólio]
+
+Requisitos do Profile README:
+1. Cabeçalho com apresentação em 1-2 frases (sem clichês, sem "apaixonado por tecnologia").
+2. Linha de badges Shields.io com minha stack.
+3. Seção "Atualmente aprendendo" ou "Foco atual".
+4. Seção "Projetos em destaque" — 2 ou 3 cards resumidos.
+5. Seção "Vamos conversar?" com ícones e links de contato.
+6. Use emojis com parcimônia (máximo 1 por linha) e mantenha tom profissional e humano.</pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- ============ PROMPT 3: Headline LinkedIn ============ -->
+        <article class="prompt-card reveal rounded-xl bg-gh-bg-soft border border-gh-border overflow-hidden flex flex-col">
+          <div class="px-5 py-4 border-b border-gh-border-soft flex items-center justify-between bg-gh-bg-soft2">
+            <div class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-md bg-gh-purple/15 border border-gh-purple/40 flex items-center justify-center text-gh-purple-soft font-mono font-bold">03</span>
+              <div>
+                <p class="text-[11px] text-gh-faint font-mono uppercase tracking-wider">Para: ChatGPT / Claude</p>
+                <h3 class="text-base font-bold text-white">Headline Estratégico para o LinkedIn</h3>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-gh-blue border border-gh-blue/40 bg-gh-blue/10 px-2 py-1 rounded">SEO LinkedIn</span>
+          </div>
+
+          <div class="p-5 flex-1 flex flex-col">
+            <p class="text-sm text-gh-muted leading-relaxed mb-3">
+              Gera <span class="text-white font-semibold">10 variações</span> de headline seguindo a fórmula "stack + solução que entrega". Você escolhe a melhor — e a IA justifica por quê.
+            </p>
+
+            <div class="relative rounded-md bg-gh-bg border border-gh-border flex-1">
+              <div class="flex items-center justify-between px-3 py-2 border-b border-gh-border-soft">
+                <span class="text-[11px] text-gh-faint font-mono"><i class="fa-solid fa-terminal mr-1"></i> prompt.txt</span>
+                <button class="copy-btn text-[11px] text-gh-muted hover:text-white border border-gh-border rounded px-2 py-0.5 transition" data-copy="prompt3">
+                  <i class="fa-regular fa-copy mr-1"></i> Copiar Prompt
+                </button>
+              </div>
+              <pre id="prompt3" class="code-block text-gh-text p-3 overflow-x-auto whitespace-pre-wrap max-h-72 overflow-y-auto">Atue como um Copywriter especializado em LinkedIn para profissionais de tecnologia. Gere 10 variações de headline (até 220 caracteres cada) para o meu perfil do LinkedIn.
+
+Dados:
+- Cargo / área: [ex: Desenvolvedora Front-end]
+- Stack principal: [ex: React, TypeScript, Tailwind]
+- Setor ou domínio: [ex: Fintech, E-commerce, Educação]
+- Solução que entrego: [ex: interfaces acessíveis que aumentam conversão]
+- Senioridade: [ex: Júnior / Pleno / Sênior]
+
+Regras das 10 variações:
+1. NÃO usar "Buscando recolocação", "Disponível no mercado", "Apaixonado por tecnologia" ou emojis genéricos.
+2. Cada variação deve seguir uma destas fórmulas:
+   - "Cargo | Stack | Solução que entrega"
+   - "Stack + resultado mensurável para o negócio"
+   - "Cargo focado em [domínio] | Stack | diferencial"
+3. Para cada variação, escreva ao lado, em itálico, por que ela funciona (palavras-chave de busca, clareza, posicionamento).
+4. No final, indique a variação com melhor equilíbrio entre SEO, autoridade e humanidade, e sugira 1 ajuste fino.</pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- ============ PROMPT 4: Sobre LinkedIn ============ -->
+        <article class="prompt-card reveal rounded-xl bg-gh-bg-soft border border-gh-border overflow-hidden flex flex-col">
+          <div class="px-5 py-4 border-b border-gh-border-soft flex items-center justify-between bg-gh-bg-soft2">
+            <div class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-md bg-gh-purple/15 border border-gh-purple/40 flex items-center justify-center text-gh-purple-soft font-mono font-bold">04</span>
+              <div>
+                <p class="text-[11px] text-gh-faint font-mono uppercase tracking-wider">Para: ChatGPT / Claude</p>
+                <h3 class="text-base font-bold text-white">Narrativa do "Sobre" no LinkedIn</h3>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-gh-green-soft border border-gh-green/40 bg-gh-green/10 px-2 py-1 rounded">Storytelling</span>
+          </div>
+
+          <div class="p-5 flex-1 flex flex-col">
+            <p class="text-sm text-gh-muted leading-relaxed mb-3">
+              Escreve a seção "Sobre" do LinkedIn em formato de <span class="text-white font-semibold">história humana</span>: por que entrou em tech, o que constrói hoje, para onde vai. Tono próximo, sem jargão.
+            </p>
+
+            <div class="relative rounded-md bg-gh-bg border border-gh-border flex-1">
+              <div class="flex items-center justify-between px-3 py-2 border-b border-gh-border-soft">
+                <span class="text-[11px] text-gh-faint font-mono"><i class="fa-solid fa-terminal mr-1"></i> prompt.txt</span>
+                <button class="copy-btn text-[11px] text-gh-muted hover:text-white border border-gh-border rounded px-2 py-0.5 transition" data-copy="prompt4">
+                  <i class="fa-regular fa-copy mr-1"></i> Copiar Prompt
+                </button>
+              </div>
+              <pre id="prompt4" class="code-block text-gh-text p-3 overflow-x-auto whitespace-pre-wrap max-h-72 overflow-y-auto">Atue como um Storyteller profissional especializado em narrativas de carreira para desenvolvedores. Escreva a seção "Sobre" do meu LinkedIn (entre 180 e 260 palavras), em primeira pessoa, em tom humano e conversacional — como se eu estivesse explicando minha trajetória para um colega de turma que acabou de conhecer.
+
+Dados para a narrativa:
+- Por que entrei na tecnologia: [sua história real — ex: "comecei montando sites pra banda de amigos"]
+- Stack dominada hoje: [ex: React + TypeScript]
+- Projeto do qual mais orgulho: [cite 1 e explique por quê em 1 frase]
+- O que mais me empolga resolver: [ex: acessibilidade, performance, DX]
+- Para onde quero ir: [ex: virar referência em a11y front-end]
+
+Regras:
+1. Abra com uma frase-gancho que NÃO comece com "Sou desenvolvedor..." — comece com uma cena, imagem ou virada.
+2. Evite jargão corporativo ("sinergia", "ecossistema", "disruptivo").
+3. Estruture em 3 parágrafos curtos: origem → hoje → futuro.
+4. Termine com 1 convite explícito (ex: "se você também se preocupa com acessibilidade, vamos conversar").
+5. Não use mais de 2 emojis em todo o texto.</pre>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- Workflow recommendation -->
+      <div class="reveal mt-8 rounded-xl bg-gh-bg-soft border border-gh-border p-6">
+        <div class="flex flex-col md:flex-row items-start md:items-center gap-4">
+          <div class="shrink-0 w-12 h-12 rounded-lg bg-gh-purple/15 border border-gh-purple/40 flex items-center justify-center text-gh-purple-soft text-xl">
+            <i class="fa-solid fa-route"></i>
+          </div>
+          <div class="flex-1">
+            <p class="text-white font-bold text-lg">Fluxo recomendado durante a oficina</p>
+            <p class="text-gh-muted leading-relaxed mt-1">
+              Rode o <span class="text-gh-blue font-semibold">Prompt 01</span> ao atualizar o README de cada repositório. Rode o <span class="text-gh-blue font-semibold">Prompt 02</span> ao montar seu Profile README do GitHub. Rode o <span class="text-gh-blue font-semibold">Prompt 03</span> e o <span class="text-gh-blue font-semibold">Prompt 04</span> ao ajustar o LinkedIn. <span class="text-white font-semibold">Sempre</span> revise e personalize ao menos 30% antes de publicar — marca pessoal não se delega.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== OFICINA: OPERAÇÃO PROFILE UP ============================== -->
+  <section id="oficina" class="relative py-20 px-4 sm:px-6 lg:px-8 border-t border-gh-border/40">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="reveal max-w-3xl mb-10">
+        <p class="sec-num text-gh-faint text-sm">// 03 — oficina_pratica</p>
+        <div class="flex items-center gap-2 mt-2 mb-4">
+          <i class="fa-solid fa-list-check text-gh-green-soft text-2xl"></i>
+          <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Operação Profile Up</h2>
+          <span class="ml-1 px-2.5 py-1 rounded-md bg-gh-green/15 border border-gh-green/40 text-gh-green-soft text-sm font-mono font-bold">~90 min</span>
+        </div>
+        <p class="text-gh-muted text-lg leading-relaxed">
+          Chegou a hora de colocar o mouse na mão. Em <span class="text-white font-semibold">7 etapas</span>, cada aluno sai da aula com: foto e username atualizados, Profile README no ar, 6 repositórios fixados, 1 README de projeto profissional, 1 deploy público, headline e "Sobre" do LinkedIn reescritos, e o rascunho do primeiro post da série "1 projeto = 5 posts". Marque cada etapa conforme avança — a barra no final acompanha seu progresso.
+        </p>
+      </div>
+
+      <!-- Steps grid -->
+      <div class="space-y-4">
+
+        <!-- STEP 1 -->
+        <div class="step-card reveal rounded-xl bg-gh-bg-soft border border-gh-border p-5 sm:p-6" data-step>
+          <div class="flex flex-col sm:flex-row gap-4 sm:items-start">
+            <button class="step-toggle shrink-0 flex items-center gap-3 sm:flex-col sm:items-start text-left">
+              <span class="step-number w-11 h-11 rounded-full bg-gh-bg border-2 border-gh-border flex items-center justify-center font-mono font-bold text-gh-text text-lg shrink-0">1</span>
+              <span class="step-check hidden text-gh-green-soft text-sm font-semibold mt-1 sm:mt-2"><i class="fa-solid fa-circle-check"></i> Feito</span>
+            </button>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2 mb-1">
+                <h3 class="text-lg font-bold text-white">Auditar seu perfil atual</h3>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gh-yellow border border-gh-yellow/40 bg-gh-yellow/10 px-2 py-0.5 rounded">~10 min</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gh-muted border border-gh-border px-2 py-0.5 rounded">Diagnóstico</span>
+              </div>
+              <p class="text-sm text-gh-muted leading-relaxed mb-3">
+                Antes de mexer em qualquer coisa, fotografe o "antes". Abra seu GitHub em aba anônima e veja com olhos de recrutador: foto visível? Username profissional? Bio com stack? Pinned repositórios com README? Anote os 3 piores problemas — eles viram as próximas tarefas.
+              </p>
+              <button class="acc-trigger text-xs font-semibold text-gh-blue hover:text-white transition inline-flex items-center gap-1.5" data-target="step1-detail">
+                <i class="fa-solid fa-chevron-down acc-chevron text-[10px]"></i> Ver checklist da etapa
+              </button>
+              <div id="step1-detail" class="acc-content mt-3">
+                <ul class="space-y-1.5 text-sm text-gh-text">
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Tire um screenshot do seu perfil GitHub atual (vá em modo anônimo para ver o que o recrutador vê).</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Liste: <span class="text-white">foto</span>, <span class="text-white">username</span>, <span class="text-white">bio</span>, <span class="text-white">nº de pinned</span>, <span class="text-white">READMEs visíveis</span>.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Anote 3 problemas prioritários para resolver nesta aula.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Faça o mesmo com seu LinkedIn: tire screenshot e liste 3 problemas.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step-card reveal rounded-xl bg-gh-bg-soft border border-gh-border p-5 sm:p-6" data-step>
+          <div class="flex flex-col sm:flex-row gap-4 sm:items-start">
+            <button class="step-toggle shrink-0 flex items-center gap-3 sm:flex-col sm:items-start text-left">
+              <span class="step-number w-11 h-11 rounded-full bg-gh-bg border-2 border-gh-border flex items-center justify-center font-mono font-bold text-gh-text text-lg shrink-0">2</span>
+              <span class="step-check hidden text-gh-green-soft text-sm font-semibold mt-1 sm:mt-2"><i class="fa-solid fa-circle-check"></i> Feito</span>
+            </button>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2 mb-1">
+                <h3 class="text-lg font-bold text-white">Identidade &amp; Profile README</h3>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gh-yellow border border-gh-yellow/40 bg-gh-yellow/10 px-2 py-0.5 rounded">~15 min</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gh-green-soft border border-gh-green/40 bg-gh-green/10 px-2 py-0.5 rounded">GitHub</span>
+              </div>
+              <p class="text-sm text-gh-muted leading-relaxed mb-3">
+                Atualize foto, nome completo, username e bio. Em paralelo, crie o repositório especial <code class="font-mono text-gh-blue">username/username</code> e rode o <a href="#ia" class="text-gh-purple-soft hover:underline">Prompt 02</a> para gerar seu Profile README. Cole o resultado, revise 30% e faça commit.
+              </p>
+              <button class="acc-trigger text-xs font-semibold text-gh-blue hover:text-white transition inline-flex items-center gap-1.5" data-target="step2-detail">
+                <i class="fa-solid fa-chevron-down acc-chevron text-[10px]"></i> Ver checklist da etapa
+              </button>
+              <div id="step2-detail" class="acc-content mt-3">
+                <ul class="space-y-1.5 text-sm text-gh-text">
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Settings → Profile → trocar foto (rosto nítido, fundo neutro).</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Atualizar <span class="text-white">Name</span> (nome completo) e <span class="text-white">Bio</span> (stack + foco + contato).</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Criar repositório <code class="font-mono text-gh-blue">seu-username/seu-username</code> (público, com README inicial).</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Rodar <a href="#ia" class="text-gh-purple-soft">Prompt 02</a>, preencher dados, copiar resposta.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Editar o README.md do repositório, colar, revisar 30%, commit.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Recarregar seu perfil e confirmar que o README apareceu no topo.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step-card reveal rounded-xl bg-gh-bg-soft border border-gh-border p-5 sm:p-6" data-step>
+          <div class="flex flex-col sm:flex-row gap-4 sm:items-start">
+            <button class="step-toggle shrink-0 flex items-center gap-3 sm:flex-col sm:items-start text-left">
+              <span class="step-number w-11 h-11 rounded-full bg-gh-bg border-2 border-gh-border flex items-center justify-center font-mono font-bold text-gh-text text-lg shrink-0">3</span>
+              <span class="step-check hidden text-gh-green-soft text-sm font-semibold mt-1 sm:mt-2"><i class="fa-solid fa-circle-check"></i> Feito</span>
+            </button>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2 mb-1">
+                <h3 class="text-lg font-bold text-white">Fixar os 6 repositórios certos</h3>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gh-yellow border border-gh-yellow/40 bg-gh-yellow/10 px-2 py-0.5 rounded">~10 min</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gh-green-soft border border-gh-green/40 bg-gh-green/10 px-2 py-0.5 rounded">GitHub</span>
+              </div>
+              <p class="text-sm text-gh-muted leading-relaxed mb-3">
+                Vá em <span class="font-mono text-gh-blue"> Customize your pins</span> e escolha <span class="text-white font-semibold">6 projetos completos</span> — preferencialmente com README e deploy. Se não tem 6 bons, escolha os 3 melhores e marque esta etapa como "parcial": o resto da oficina vai justamente gerar o 4º.
+              </p>
+              <button class="acc-trigger text-xs font-semibold text-gh-blue hover:text-white transition inline-flex items-center gap-1.5" data-target="step3-detail">
+                <i class="fa-solid fa-chevron-down acc-chevron text-[10px]"></i> Ver checklist da etapa
+              </button>
+              <div id="step3-detail" class="acc-content mt-3">
+                <ul class="space-y-1.5 text-sm text-gh-text">
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> No seu perfil, clique em <span class="font-mono text-gh-blue">Customize your pins</span>.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Selecione até 6 repositórios. Priorize os <span class="text-white">com README</span> e <span class="text-white">com deploy</span>.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Remova "exercício-aula", "teste", "hello-world" — sinalizam imaturidade.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Salve. Recarregue e veja se a vitrine está coerente.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="step-card reveal rounded-xl bg-gh-bg-soft border border-gh-border p-5 sm:p-6" data-step>
+          <div class="flex flex-col sm:flex-row gap-4 sm:items-start">
+            <button class="step-toggle shrink-0 flex items-center gap-3 sm:flex-col sm:items-start text-left">
+              <span class="step-number w-11 h-11 rounded-full bg-gh-bg border-2 border-gh-border flex items-center justify-center font-mono font-bold text-gh-text text-lg shrink-0">4</span>
+              <span class="step-check hidden text-gh-green-soft text-sm font-semibold mt-1 sm:mt-2"><i class="fa-solid fa-circle-check"></i> Feito</span>
+            </button>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2 mb-1">
+                <h3 class="text-lg font-bold text-white">README profissional de 1 projeto</h3>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gh-yellow border border-gh-yellow/40 bg-gh-yellow/10 px-2 py-0.5 rounded">~15 min</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gh-purple-soft border border-gh-purple/40 bg-gh-purple/10 px-2 py-0.5 rounded">IA</span>
+              </div>
+              <p class="text-sm text-gh-muted leading-relaxed mb-3">
+                Escolha <span class="text-white font-semibold">1 repositório fixado</span> (de preferência o seu melhor). Rode o <a href="#ia" class="text-gh-purple-soft hover:underline">Prompt 01</a> preenchendo os dados dele. Cole no <code class="font-mono text-gh-blue">README.md</code> da raiz, ajuste os exemplos de comando, adicione badges e faça commit.
+              </p>
+              <button class="acc-trigger text-xs font-semibold text-gh-blue hover:text-white transition inline-flex items-center gap-1.5" data-target="step4-detail">
+                <i class="fa-solid fa-chevron-down acc-chevron text-[10px]"></i> Ver checklist da etapa
+              </button>
+              <div id="step4-detail" class="acc-content mt-3">
+                <ul class="space-y-1.5 text-sm text-gh-text">
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Abra o repositório do projeto → editar <code class="font-mono text-gh-blue">README.md</code>.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Copiar <a href="#ia" class="text-gh-purple-soft">Prompt 01</a>, preencher dados, rodar no ChatGPT/Claude.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Colar resposta no README. <span class="text-white">Revisar 30%</span>: trocar clichês, ajustar nomes de comando.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Adicionar badges Shields.io para a stack real do projeto.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Commit com mensagem <code class="font-mono text-gh-yellow">docs: improve README</code>.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 5 -->
+        <div class="step-card reveal rounded-xl bg-gh-bg-soft border border-gh-border p-5 sm:p-6" data-step>
+          <div class="flex flex-col sm:flex-row gap-4 sm:items-start">
+            <button class="step-toggle shrink-0 flex items-center gap-3 sm:flex-col sm:items-start text-left">
+              <span class="step-number w-11 h-11 rounded-full bg-gh-bg border-2 border-gh-border flex items-center justify-center font-mono font-bold text-gh-text text-lg shrink-0">5</span>
+              <span class="step-check hidden text-gh-green-soft text-sm font-semibold mt-1 sm:mt-2"><i class="fa-solid fa-circle-check"></i> Feito</span>
+            </button>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2 mb-1">
+                <h3 class="text-lg font-bold text-white">Deploy público do projeto</h3>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gh-yellow border border-gh-yellow/40 bg-gh-yellow/10 px-2 py-0.5 rounded">~15 min</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gh-blue border border-gh-blue/40 bg-gh-blue/10 px-2 py-0.5 rounded">Deploy</span>
+              </div>
+              <p class="text-sm text-gh-muted leading-relaxed mb-3">
+                Suba o mesmo projeto da etapa 4 em uma das plataformas do <a href="#deploy" class="text-gh-purple-soft hover:underline">Bloco 3A</a>. Se for React/Next → Vercel. Se for estático → GitHub Pages. Volte ao README e cole o link de deploy na seção correspondente.
+              </p>
+              <button class="acc-trigger text-xs font-semibold text-gh-blue hover:text-white transition inline-flex items-center gap-1.5" data-target="step5-detail">
+                <i class="fa-solid fa-chevron-down acc-chevron text-[10px]"></i> Ver checklist da etapa
+              </button>
+              <div id="step5-detail" class="acc-content mt-3">
+                <ul class="space-y-1.5 text-sm text-gh-text">
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Decidir plataforma pela stack (ver <a href="#deploy" class="text-gh-purple-soft">comparativo</a>).</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Criar conta (Vercel/Netlify/Render) com login do GitHub.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Conectar repositório → Deploy.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Copiar URL pública gerada.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Voltar no README do projeto e colar o link na seção "Deploy".</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Commit: <code class="font-mono text-gh-yellow">docs: add live deploy link</code>.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 6 -->
+        <div class="step-card reveal rounded-xl bg-gh-bg-soft border border-gh-border p-5 sm:p-6" data-step>
+          <div class="flex flex-col sm:flex-row gap-4 sm:items-start">
+            <button class="step-toggle shrink-0 flex items-center gap-3 sm:flex-col sm:items-start text-left">
+              <span class="step-number w-11 h-11 rounded-full bg-gh-bg border-2 border-gh-border flex items-center justify-center font-mono font-bold text-gh-text text-lg shrink-0">6</span>
+              <span class="step-check hidden text-gh-green-soft text-sm font-semibold mt-1 sm:mt-2"><i class="fa-solid fa-circle-check"></i> Feito</span>
+            </button>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2 mb-1">
+                <h3 class="text-lg font-bold text-white">Headline + Sobre no LinkedIn</h3>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gh-yellow border border-gh-yellow/40 bg-gh-yellow/10 px-2 py-0.5 rounded">~15 min</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gh-purple-soft border border-gh-purple/40 bg-gh-purple/10 px-2 py-0.5 rounded">IA</span>
+              </div>
+              <p class="text-sm text-gh-muted leading-relaxed mb-3">
+                Rode os <a href="#ia" class="text-gh-purple-soft hover:underline">Prompts 03 e 04</a> com seus dados. Escolha a melhor headline entre as 10 variações. Cole o "Sobre" no LinkedIn, ajuste a voz e salve. Esse passo sozinho já multiplica suas chances de ser encontrado em buscas.
+              </p>
+              <button class="acc-trigger text-xs font-semibold text-gh-blue hover:text-white transition inline-flex items-center gap-1.5" data-target="step6-detail">
+                <i class="fa-solid fa-chevron-down acc-chevron text-[10px]"></i> Ver checklist da etapa
+              </button>
+              <div id="step6-detail" class="acc-content mt-3">
+                <ul class="space-y-1.5 text-sm text-gh-text">
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Rodar <a href="#ia" class="text-gh-purple-soft">Prompt 03</a> com seus dados → escolher 1 headline entre as 10.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Atualizar headline no LinkedIn (perfil → editar → headline).</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Rodar <a href="#ia" class="text-gh-purple-soft">Prompt 04</a> → revisar 30% com sua voz.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Colar na seção "Sobre" do LinkedIn e salvar.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 7 -->
+        <div class="step-card reveal rounded-xl bg-gh-bg-soft border border-gh-border p-5 sm:p-6" data-step>
+          <div class="flex flex-col sm:flex-row gap-4 sm:items-start">
+            <button class="step-toggle shrink-0 flex items-center gap-3 sm:flex-col sm:items-start text-left">
+              <span class="step-number w-11 h-11 rounded-full bg-gh-bg border-2 border-gh-border flex items-center justify-center font-mono font-bold text-gh-text text-lg shrink-0">7</span>
+              <span class="step-check hidden text-gh-green-soft text-sm font-semibold mt-1 sm:mt-2"><i class="fa-solid fa-circle-check"></i> Feito</span>
+            </button>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2 mb-1">
+                <h3 class="text-lg font-bold text-white">Rascunho do 1º post (de 5)</h3>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gh-yellow border border-gh-yellow/40 bg-gh-yellow/10 px-2 py-0.5 rounded">~10 min</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gh-blue border border-gh-blue/40 bg-gh-blue/10 px-2 py-0.5 rounded">Conteúdo</span>
+              </div>
+              <p class="text-sm text-gh-muted leading-relaxed mb-3">
+                Do framework "1 projeto = 5 posts" da Parte 1, rascunhe o <span class="text-white font-semibold">Post 1 — O Anúncio</span>. Estrutura: problema que existia → solução que você construiu → link do GitHub + deploy. Salve como rascunho no LinkedIn. Publicar fica para depois — o importante é ter o esqueleto pronto.
+              </p>
+              <button class="acc-trigger text-xs font-semibold text-gh-blue hover:text-white transition inline-flex items-center gap-1.5" data-target="step7-detail">
+                <i class="fa-solid fa-chevron-down acc-chevron text-[10px]"></i> Ver checklist da etapa
+              </button>
+              <div id="step7-detail" class="acc-content mt-3">
+                <ul class="space-y-1.5 text-sm text-gh-text">
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Em 3 linhas: qual <span class="text-white">problema</span> motivou o projeto?</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Em 3 linhas: qual <span class="text-white">solução</span> você construiu?</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Citar stack principal e 1 diferencial (a11y, performance, offline...).</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Adicionar 2 links: GitHub do projeto + deploy ao vivo.</li>
+                  <li class="flex gap-2"><i class="fa-solid fa-square text-gh-border mt-1 text-xs"></i> Salvar como <span class="text-white">rascunho</span> no LinkedIn. (Publicar pode ser na próxima segunda.)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="reveal mt-8 rounded-xl bg-gh-bg-soft border border-gh-border p-5">
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-sm text-gh-muted"><i class="fa-solid fa-gauge-high text-gh-green-soft mr-1.5"></i>Progresso da Oficina</p>
+          <p class="text-sm font-mono text-white"><span id="step-count">0</span> / 7 etapas concluídas</p>
+        </div>
+        <div class="h-2.5 rounded-full bg-gh-bg overflow-hidden border border-gh-border-soft">
+          <div id="step-bar" class="h-full bg-gradient-to-r from-gh-purple via-gh-blue to-gh-green transition-all duration-500" style="width:0%"></div>
+        </div>
+        <p class="text-[11px] text-gh-faint mt-2 italic">Clique no número de cada etapa (1, 2, 3...) para marcar como concluída.</p>
+      </div>
+
+      <!-- Final CTA -->
+      <div class="reveal mt-8 rounded-2xl gradient-border bg-gh-bg-soft p-8 text-center relative overflow-hidden">
+        <div class="absolute inset-0 grid-bg opacity-20"></div>
+        <div class="relative z-10 max-w-2xl mx-auto">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gh-green/10 border border-gh-green/40 text-gh-green-soft text-xs font-bold uppercase tracking-wider mb-4">
+            <i class="fa-solid fa-flag-checkered"></i> Conclusão da Oficina
+          </div>
+          <h3 class="text-2xl sm:text-3xl font-black text-white mb-3">Seu perfil saiu do invisível.</h3>
+          <p class="text-gh-muted leading-relaxed mb-5">
+            Você saiu com: <span class="text-white font-semibold">Profile README</span> no GitHub, <span class="text-white font-semibold">README profissional</span> de um projeto, <span class="text-white font-semibold">deploy público</span>, headline e "Sobre" do LinkedIn reescritos e o <span class="text-white font-semibold">rascunho do 1º post</span> da série. Repita esse ciclo a cada novo projeto — em 3 meses, você tem uma marca técnica reconhecível.
+          </p>
+          <div class="flex flex-wrap items-center justify-center gap-3">
+            <a href="index.html" class="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gh-bg-soft border border-gh-border text-white font-semibold text-sm hover:border-gh-purple/50 transition">
+              <i class="fa-solid fa-arrow-left"></i> Revisar Parte 1
+            </a>
+            <a href="#top" class="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gh-purple text-white font-bold text-sm hover:bg-gh-purple-soft transition shadow-glow-purple">
+              <i class="fa-solid fa-arrow-up"></i> Voltar ao topo
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================== FOOTER ============================== -->
+  <footer class="relative border-t border-gh-border/60 px-4 sm:px-6 lg:px-8 py-12 bg-gh-bg">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid md:grid-cols-3 gap-8">
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 rounded-md bg-gradient-to-br from-gh-purple via-gh-blue to-gh-green flex items-center justify-center text-white font-black text-sm">
+              <i class="fa-solid fa-toolbox"></i>
+            </div>
+            <p class="text-base font-bold text-white">Operação Profile Up</p>
+          </div>
+          <p class="text-sm text-gh-muted leading-relaxed max-w-sm">
+            Parte 2 da aula "Construindo seu Portfólio &amp; Personal Branding com GitHub e LinkedIn". Painel de consulta e execução para o laboratório prático em sala.
+          </p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-gh-faint font-bold mb-3">Plataformas de Deploy</p>
+          <ul class="space-y-2 text-sm">
+            <li><a href="https://pages.github.com" target="_blank" class="text-gh-blue hover:text-white transition flex items-center gap-2"><i class="fa-brands fa-github"></i> GitHub Pages</a></li>
+            <li><a href="https://vercel.com" target="_blank" class="text-gh-blue hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-bolt"></i> Vercel</a></li>
+            <li><a href="https://netlify.com" target="_blank" class="text-gh-blue hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-diamond"></i> Netlify</a></li>
+            <li><a href="https://render.com" target="_blank" class="text-gh-blue hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-cubes"></i> Render</a></li>
+            <li><a href="https://railway.app" target="_blank" class="text-gh-blue hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-train"></i> Railway</a></li>
+            <li><a href="https://koyeb.com" target="_blank" class="text-gh-blue hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-network-wired"></i> Koyeb</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-gh-faint font-bold mb-3">IAs &amp; Ferramentas</p>
+          <ul class="space-y-2 text-sm">
+            <li><a href="https://chat.openai.com" target="_blank" class="text-gh-blue hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-comment-dots"></i> ChatGPT</a></li>
+            <li><a href="https://claude.ai" target="_blank" class="text-gh-blue hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-robot"></i> Claude</a></li>
+            <li><a href="https://shields.io" target="_blank" class="text-gh-blue hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> Shields.io</a></li>
+            <li><a href="https://linkedin.com" target="_blank" class="text-gh-blue hover:text-white transition flex items-center gap-2"><i class="fa-brands fa-linkedin"></i> LinkedIn</a></li>
+            <li><a href="index.html" class="text-gh-muted hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-arrow-left"></i> Voltar para Parte 1</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gh-border/60 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p class="text-xs text-gh-faint font-mono">// parte_02 / fim_da_oficina</p>
+        <p class="text-xs text-gh-faint">
+          Construído com <i class="fa-solid fa-heart text-gh-purple"></i> usando Tailwind CSS + FontAwesome · Dark Mode Developer
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top button -->
+  <a href="#top" id="back-top" class="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full bg-gh-purple text-white shadow-glow-purple flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 hover:bg-gh-purple-soft" aria-label="Voltar ao topo">
+    <i class="fa-solid fa-arrow-up"></i>
+  </a>
+
+  <!-- ============================== JAVASCRIPT ============================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      // ---------- 1) Tabs (deploy platforms) ----------
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      const tabPanels = document.querySelectorAll('.tab-panel');
+      tabButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const target = btn.getAttribute('data-tab');
+          tabButtons.forEach(b => b.classList.remove('active'));
+          tabPanels.forEach(p => p.classList.remove('active'));
+          btn.classList.add('active');
+          const panel = document.getElementById(target);
+          if (panel) panel.classList.add('active');
+        });
+      });
+
+      // ---------- 2) Accordions (steps) ----------
+      document.querySelectorAll('.acc-trigger').forEach(function (trigger) {
+        trigger.addEventListener('click', function () {
+          const targetId = trigger.getAttribute('data-target');
+          const content = document.getElementById(targetId);
+          if (!content) return;
+          const isOpen = content.classList.toggle('open');
+          trigger.classList.toggle('open', isOpen);
+        });
+      });
+
+      // ---------- 3) Copy prompt buttons ----------
+      document.querySelectorAll('.copy-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const id = btn.getAttribute('data-copy');
+          const el = document.getElementById(id);
+          if (!el) return;
+          const text = el.innerText;
+          function showCopied() {
+            btn.classList.add('copied');
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Copiado!';
+            setTimeout(function () {
+              btn.classList.remove('copied');
+              btn.innerHTML = original;
+            }, 1800);
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(showCopied).catch(function () {
+              fallbackCopy(text); showCopied();
+            });
+          } else {
+            fallbackCopy(text); showCopied();
+          }
+          function fallbackCopy(str) {
+            const ta = document.createElement('textarea');
+            ta.value = str;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); } catch (e) {}
+            document.body.removeChild(ta);
+          }
+        });
+      });
+
+      // ---------- 4) Reveal on scroll ----------
+      const reveals = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in');
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(el => io.observe(el));
+      } else {
+        reveals.forEach(el => el.classList.add('in'));
+      }
+
+      // ---------- 5) Active nav + back-to-top ----------
+      const sections = ['deploy', 'ia', 'oficina'];
+      const navLinks = document.querySelectorAll('.nav-link');
+      function updateActiveNav() {
+        const scrollY = window.scrollY + 120;
+        let current = '';
+        sections.forEach(id => {
+          const sec = document.getElementById(id);
+          if (sec && sec.offsetTop <= scrollY) current = id;
+        });
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+        });
+        const back = document.getElementById('back-top');
+        if (back) {
+          if (window.scrollY > 600) {
+            back.classList.remove('opacity-0', 'pointer-events-none');
+          } else {
+            back.classList.add('opacity-0', 'pointer-events-none');
+          }
+        }
+      }
+      window.addEventListener('scroll', updateActiveNav, { passive: true });
+      updateActiveNav();
+
+      // ---------- 6) Step toggle (workshop progress) ----------
+      const stepCards = document.querySelectorAll('[data-step]');
+      let stepCompleted = 0;
+      const stepTotal = stepCards.length;
+      const stepCountEl = document.getElementById('step-count');
+      const stepBarEl = document.getElementById('step-bar');
+
+      function updateStepProgress() {
+        if (stepCountEl) stepCountEl.textContent = stepCompleted;
+        if (stepBarEl) {
+          const pct = stepTotal === 0 ? 0 : Math.round((stepCompleted / stepTotal) * 100);
+          stepBarEl.style.width = pct + '%';
+        }
+      }
+
+      stepCards.forEach(function (card) {
+        const toggle = card.querySelector('.step-toggle');
+        const number = card.querySelector('.step-number');
+        const check = card.querySelector('.step-check');
+        if (!toggle) return;
+        toggle.addEventListener('click', function () {
+          const isDone = card.classList.toggle('done');
+          if (number) number.textContent = isDone ? '✓' : Array.from(stepCards).indexOf(card) + 1;
+          if (check) check.classList.toggle('hidden', !isDone);
+          if (isDone) {
+            stepCompleted = Math.min(stepTotal, stepCompleted + 1);
+          } else {
+            stepCompleted = Math.max(0, stepCompleted - 1);
+          }
+          updateStepProgress();
+        });
+      });
+      updateStepProgress();
+
+    })();
+  </script>
+</body>
+</html>
